@@ -26,19 +26,33 @@ public class DiretorController : ControllerBase
       return Ok(diretor);
     } 
     [HttpPut]
-    public string Put()
+    public async Task<ActionResult<Diretor>> Put([FromBody] Diretor diretor)
     {
-        return "Put";
+        _context.Diretores.Update(diretor);
+        await _context.SaveChangesAsync();
+        return Ok(diretor);
     } 
     [HttpGet]
+    [Route("GetAll")]
     public async Task<List<Diretor>> Get()
     {
         return await _context.Diretores.ToListAsync();
     } 
-        [HttpDelete]
-    public string Delete()
-    {
-        return "Delete";
+
+
+    [HttpGet]
+    [Route("GetId/{id}")]
+    public async Task<Diretor> GetId(long id)
+    { 
+        return await  _context.Diretores.FindAsync(id);
+    } 
+    
+    [HttpDelete]
+    public async Task<ActionResult<Diretor>> DeletePut([FromBody] Diretor diretor)
+    {   
+        _context.Diretores.Remove (diretor);
+        await _context.SaveChangesAsync();
+        return Ok(diretor);
     } 
 
 
