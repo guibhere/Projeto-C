@@ -34,7 +34,9 @@ namespace Projeto_C_
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Projeto_C_", Version = "v1" });
             });
             services.AddDbContext<AplicationDbContext>(options => options.UseSqlite("Data Source=myapp.db"));
-            }
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

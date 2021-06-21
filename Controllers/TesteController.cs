@@ -1,9 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System;
+using System.IO;
+
 
 namespace Projeto_C_.Controllers
 {
@@ -11,17 +14,68 @@ namespace Projeto_C_.Controllers
     [Route("[controller]")]
     public class TesteController : ControllerBase
     {
-        private readonly ILogger<TesteController> _logger;
+        public static IWebHostEnvironment _environment;
+        private readonly AplicationDbContext _context;
 
-        public TesteController(ILogger<TesteController> logger)
+        public TesteController(AplicationDbContext context, IWebHostEnvironment environment)
         {
-            _logger = logger;
+            _context = context;
+            _environment = environment;
+        }
+        [HttpGet("Arquivos/All")]
+        public async Task<String[]> GetAllFiles()
+        {
+            string dir = _environment.ContentRootPath + "\\Arquivos\\";
+            return Directory.GetFiles(dir);
+
+        }
+        [HttpGet("Download{file}")]
+        [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BadRequestObjectResult), 400)]
+        public async Task<IActionResult> GetFileDownload(string file)
+        {
+            string dir = _environment.ContentRootPath + "\\Arquivos\\";
+            if (!System.IO.File.Exists(dir + file))
+            {
+                return BadRequest();
+            }
+            return File(await System.IO.File.ReadAllBytesAsync(dir + file), "application/octet-stream", file);
+
         }
 
-        [HttpGet]
-        public String Get()
+
+        [HttpPost("Upload")]
+        public async Task<string> EnviaArquivo(IFormFile arquivo)
         {
-            return "teste";
+            if (arquivo.Length > 0)
+            {
+                try
+                {
+                    string dir = _environment.ContentRootPath;
+                    if (!Directory.Exists(dir + "\\Arquivos\\"))
+                    {
+                        Directory.CreateDirectory(dir + "\\Arquivos\\");
+                    }
+                    using (FileStream filestream = System.IO.File.Create(dir + "\\Arquivos\\" + arquivo.FileName))
+                    {
+                        await arquivo.CopyToAsync(filestream);
+                        filestream.Flush();
+
+                        return filestream.Name;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return ex.ToString();
+                }
+            }
+            else
+            {
+                return "Ocorreu uma falha no envio do arquivo...";
+            }
         }
+
+
+
     }
 }

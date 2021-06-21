@@ -36,7 +36,7 @@ public class DiretorController : ControllerBase
     [Route("GetAll")]
     public async Task<List<Diretor>> Get()
     {
-        return await _context.Diretores.ToListAsync();
+        return await _context.Diretores.Include(filmes => filmes.Filmes).ToListAsync();
     } 
 
 
@@ -44,7 +44,7 @@ public class DiretorController : ControllerBase
     [Route("GetId/{id}")]
     public async Task<Diretor> GetId(long id)
     { 
-        return await  _context.Diretores.FindAsync(id);
+        return await  _context.Diretores.Include(f => f.Filmes).FirstOrDefaultAsync(d => d.Id == id);
     } 
     
     [HttpDelete]
