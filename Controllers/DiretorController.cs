@@ -34,17 +34,25 @@ public class DiretorController : ControllerBase
     } 
     [HttpGet]
     [Route("GetAll")]
-    public async Task<List<Diretor>> Get()
+    public async Task<List<DiretorOutputGetDTO>> Get()
     {
-        return await _context.Diretores.Include(filmes => filmes.Filmes).ToListAsync();
+        var diretores = await _context.Diretores.ToListAsync();
+        var output = new List<DiretorOutputGetDTO>();
+        foreach(Diretor d in diretores)
+        {
+            output.Add(new DiretorOutputGetDTO(d.Id,d.Nome));
+        }
+        return output;
     } 
 
 
     [HttpGet]
     [Route("GetId/{id}")]
-    public async Task<Diretor> GetId(long id)
+    public async Task<ActionResult<DiretorOutputGetIdDTO>> GetId(long id)
     { 
-        return await  _context.Diretores.Include(f => f.Filmes).FirstOrDefaultAsync(d => d.Id == id);
+        var diretor = await  _context.Diretores.FirstOrDefaultAsync(diretor => diretor.Id == id);
+        var output = new DiretorOutputGetIdDTO(diretor.Id,diretor.Nome);
+        return Ok(output); 
     } 
     
     [HttpDelete]

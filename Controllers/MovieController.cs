@@ -13,23 +13,13 @@ public class MovieController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Filme>> Post([FromBody] Filme f)
+    public async Task<ActionResult<FilmeOutputPostDTO>> Post([FromBody] FilmeInputPostDTO input)
     {
-        if ((f.Titulo == null) || (f.Titulo == ""))
-        {
-            return Conflict("Nome do filme necessário!");
-        }
-        Diretor d = await _context.Diretores.FindAsync(f.DiretorId);
-        if (d == null)
-        {
-            return Conflict("Diretor não encontrado");
-        }
-
-        f.Diretor = d;
+        var f = new Filme(input.Titulo,input.DiretorID);
         _context.Filmes.Add(f);
         await _context.SaveChangesAsync();
-
-        return Ok(f);
+        var output = new FilmeOutputPostDTO(f.Id,f.Titulo,f.DiretorId);
+        return Ok(output);
     }
     [HttpPut]
     public async Task<ActionResult<Filme>> Put([FromBody] Filme f)
@@ -57,9 +47,11 @@ public class MovieController : ControllerBase
 
     [HttpGet]
     [Route("Id/{id}")]
-    public async Task<Filme> GetId(long id)
+    public async Task<ActionResult<FilmeOutputGetIdDTO>> GetId(long id)
     {
-        return await _context.Filmes.Include(d => d.Diretor).Include(filmes => filmes.Diretor.Filmes).FirstOrDefaultAsync(f => f.Id == id);
+        var f = await _context.Filmes.Include(d => d.Diretor).FirstOrDefaultAsync(f=> f.Id == id);
+        var output = new FilmeOutputGetIdDTO(f.Id,f.Titulo,f.Diretor.Nome);
+        return Ok(output);
     }
 
     [HttpDelete]
