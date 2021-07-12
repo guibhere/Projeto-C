@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Reflection;
+using FluentValidation.AspNetCore;
 
 namespace Projeto_C_
 {
@@ -30,7 +31,9 @@ namespace Projeto_C_
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation(options =>{
+                options.RegisterValidatorsFromAssemblyContaining<Startup>();
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Projeto_C_", Version = "v1" });
