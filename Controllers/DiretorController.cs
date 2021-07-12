@@ -17,6 +17,21 @@ public class DiretorController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Diretor>> Post([FromBody] Diretor diretor)
     {
+        /// <summary>
+        /// Cria um diretor
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /diretor
+        ///     {
+        ///        "nome": "Martin Scorsese",
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="nome">Nome do diretor</param>
+        /// <returns>O diretor criado</returns>
+        /// <response code="200">Diretor foi criado com sucesso</response>
         try
         {
             if ((diretor.Nome == null) || (diretor.Nome == ""))
