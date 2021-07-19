@@ -30,8 +30,6 @@ namespace Projeto_C_
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<FilmeService, FilmeService>();
-            services.AddTransient<DiretorService, DiretorService>();
             services.AddControllers().AddFluentValidation(options =>
             {
                 options.RegisterValidatorsFromAssemblyContaining<Startup>();
@@ -45,6 +43,8 @@ namespace Projeto_C_
             });
 
             services.AddDbContext<AplicationDbContext>(options => options.UseSqlite("Data Source=myapp.db"));
+            services.AddScoped<IFilmeService, FilmeService>();
+            services.AddScoped<IDiretorService, DiretorService>();
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }

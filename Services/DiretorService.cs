@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-public class DiretorService 
+public class DiretorService : IDiretorService 
 {
     private readonly AplicationDbContext _context;
     public DiretorService(AplicationDbContext context)

@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore;
 [Route("[controller]")]
 public class DiretorController : ControllerBase
 {
-    private readonly DiretorService _DiretorService;
+    private readonly IDiretorService _DiretorService;
 
-    public DiretorController(DiretorService DiretorService)
+    public DiretorController(IDiretorService DiretorService)
     {
         _DiretorService = DiretorService;
     }

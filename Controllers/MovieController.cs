@@ -6,8 +6,8 @@ using System.Collections.Generic;
 [Route("[controller]")]
 public class MovieController : ControllerBase
 {
-    private readonly FilmeService _filmeserv;
-    public MovieController(FilmeService filmeserv)
+    private readonly IFilmeService _filmeserv;
+    public MovieController(IFilmeService filmeserv)
     {
         _filmeserv = filmeserv;
     }
