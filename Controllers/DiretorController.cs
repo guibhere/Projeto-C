@@ -1,17 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System;
 
 [ApiController]
 [Route("[controller]")]
 public class DiretorController : ControllerBase
 {
-    private readonly AplicationDbContext _context;
-    public DiretorController(AplicationDbContext context)
+    private readonly DiretorService _DiretorService;
+
+    public DiretorController(DiretorService DiretorService)
     {
-        _context = context;
+        _DiretorService = DiretorService;
+    }
+
+    // GET api/diretores
+    [HttpGet]
+    public async Task<ActionResult<List<DiretorOutputGetDTO>>> Get()
+    {
+        var diretores = await _DiretorService.GetAll();
+
+        if (!diretores.Any())
+        {
+            return NotFound("Não existem diretores cadastrados!");
+        }
+
+        var outputDTOList = new List<DiretorOutputGetDTO>();
+
+        foreach (Diretor diretor in diretores)
+        {
+            outputDTOList.Add(new DiretorOutputGetDTO(diretor.Id, diretor.Nome));
+        }
+
+        return outputDTOList;
+    }
+
+    // GET api/diretores/1
+    [HttpGet("{id}")]
+    public async Task<ActionResult<DiretorOutputGetIdDTO>> Get(long id)
+    {
+        var diretor = await _DiretorService.GetById(id);
+
+        if (diretor == null)
+        {
+            return NotFound("Diretor não encontrado!");
+        }
+
+        var outputDto = new DiretorOutputGetIdDTO(diretor.Id, diretor.Nome);
+        return Ok(outputDto);
     }
 
     /// <summary>
@@ -26,95 +64,42 @@ public class DiretorController : ControllerBase
     ///     }
     ///
     /// </remarks>
-    /// <param name="nome">Nome do diretor</param>
+    /// <param name="diretorInputDto">Nome do diretor</param>
     /// <returns>O diretor criado</returns>
     /// <response code="200">Diretor foi criado com sucesso</response>
+    /// <response code="400">Bad Request</response>
+    /// <response code="404">Not Found</response>
+    /// <response code="500">Erro interno inesperado</response>
+    /// 
     [HttpPost]
-    public async Task<ActionResult<Diretor>> Post([FromBody] Diretor diretor)
+    public async Task<ActionResult<DiretorOutputPostDTO>> Post([FromBody] DiretorInputPostDTO diretorInputDto)
     {
-        try
-        {
-            if ((diretor.Nome == null) || (diretor.Nome == ""))
-            {
-                return Conflict("Nome do diretor necessário!");
-            }
-            _context.Diretores.Add(diretor);
-            await _context.SaveChangesAsync();
+        var diretor = new Diretor(diretorInputDto.Nome);
+        await _DiretorService.Add(diretor);
 
-            return Ok(diretor);
-        }
-        catch (Exception e)
-        {
-            return Conflict(e.Message);
-        }
-    }
-    [HttpPut]
-    public async Task<ActionResult<Diretor>> Put([FromBody] Diretor diretor)
-    {
-        try
-        {
-
-            _context.Diretores.Update(diretor);
-            await _context.SaveChangesAsync();
-            return Ok(diretor);
-        }
-        catch (Exception e)
-        {
-            return Conflict(e.Message);
-        }
-    }
-    [HttpGet]
-    [Route("GetAll")]
-    public async Task<ActionResult<List<DiretorOutputGetDTO>>> Get()
-    {
-        try
-        {
-            var diretores = await _context.Diretores.ToListAsync();
-            var output = new List<DiretorOutputGetDTO>();
-            foreach (Diretor d in diretores)
-            {
-                output.Add(new DiretorOutputGetDTO(d.Id, d.Nome));
-            }
-            return output;
-        }
-        catch (Exception e)
-        {
-            return Conflict(e.Message);
-        }
+        var diretorOutputDto = new DiretorOutputPostDTO(diretor.Id, diretor.Nome);
+        return Ok(diretorOutputDto);
     }
 
 
-    [HttpGet]
-    [Route("GetId/{id}")]
-    public async Task<ActionResult<DiretorOutputGetIdDTO>> GetId(long id)
+    // PUT api/diretores/{id}
+    [HttpPut("{id}")]
+    public async Task<ActionResult<DiretorOutputPutDTO>> Put(long id, [FromBody] DiretorInputPutDTO diretorInputDto)
     {
-        try
-        {
-            var diretor = await _context.Diretores.FirstOrDefaultAsync(diretor => diretor.Id == id);
-            var output = new DiretorOutputGetIdDTO(diretor.Id, diretor.Nome);
-            return Ok(output);
-        }
-        catch (Exception e)
-        {
-            return Conflict(e.Message);
-        }
+        var diretor = new Diretor(diretorInputDto.Nome);
+        diretor.Id = id;
+        await _DiretorService.Update(diretor);
+
+        var diretorOutputDto = new DiretorOutputPutDTO(diretor.Id, diretor.Nome);
+        return Ok(diretorOutputDto);
     }
 
-    [HttpDelete]
-    public async Task<ActionResult<Diretor>> DeletePut([FromBody] Diretor diretor)
+    // DELETE api/diretores/{id}
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(long id)
     {
-        try
-        {
-            _context.Diretores.Remove(diretor);
-            await _context.SaveChangesAsync();
-            return Ok(diretor);
-        }
-        catch (Exception e)
-        {
-            return Conflict(e.Message);
-        }
+        await _DiretorService.Delete(id);
+        return Ok();
     }
-
-
 
 }

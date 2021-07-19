@@ -6,51 +6,48 @@ using System.Collections.Generic;
 [Route("[controller]")]
 public class MovieController : ControllerBase
 {
-    private readonly AplicationDbContext _context;
-    public MovieController(AplicationDbContext context)
+    private readonly FilmeService _filmeserv;
+    public MovieController(FilmeService filmeserv)
     {
-        _context = context;
+        _filmeserv = filmeserv;
     }
 
     [HttpPost]
     public async Task<ActionResult<FilmeOutputPostDTO>> Post([FromBody] FilmeInputPostDTO input)
     {
-        var f = new Filme(input.Titulo,input.DiretorID);
-        _context.Filmes.Add(f);
-        await _context.SaveChangesAsync();
-        var output = new FilmeOutputPostDTO(f.Id,f.Titulo,f.DiretorId);
+        var f = new Filme(input.Titulo, input.DiretorID);
+        await _filmeserv.Post(f);
+        var output = new FilmeOutputPostDTO(f.Id, f.Titulo, f.DiretorId);
         return Ok(output);
     }
-    [HttpPut]
-    public async Task<ActionResult<Filme>> Put([FromBody] Filme f)
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Filme>> Put(long id, [FromBody] FilmeInputPutDTO input)
     {
-        if ((f.Titulo == null) || (f.Titulo == ""))
-        {
-            return Conflict("Nome do filme necessário!");
-        }
-        var d = await _context.Diretores.FindAsync(f.DiretorId);
-        if (d == null)
-        {
-            return Conflict("Diretor não encontrado");
-        }
-
-        _context.Filmes.Update(f);
-        await _context.SaveChangesAsync();
-        return Ok(f);
+        var f = new Filme(input.Titulo, input.DiretorId);
+        f.Id = id;
+        await _filmeserv.Put(f);
+        var output = new FilmeOutputPutDTO(f.Id, f.Titulo);
+        return Ok(output);
     }
-    [HttpGet]
 
-    public async Task<List<Filme>> GetAll()
+    [HttpGet]
+    public async Task<List<FilmeOutPutGetAllDTO>> GetAll()
     {
-        return await _context.Filmes.Include(d => d.Diretor).ToListAsync();
-    } 
+        var filmes = await _filmeserv.GetAll();
+        var output = new List<FilmeOutPutGetAllDTO>();
+        foreach (Filme f in filmes)
+        {
+            output.Add(new FilmeOutPutGetAllDTO(f.Id, f.Titulo));
+        }
+        return output;
+    }
 
     [HttpGet]
     [Route("Id/{id}")]
     public async Task<ActionResult<FilmeOutputGetIdDTO>> GetId(long id)
     {
-        var f = await _context.Filmes.Include(d => d.Diretor).FirstOrDefaultAsync(f=> f.Id == id);
-        var output = new FilmeOutputGetIdDTO(f.Id,f.Titulo,f.Diretor.Nome);
+        var f = await _filmeserv.GetId(id);
+        var output = new FilmeOutputGetIdDTO(f.Id, f.Titulo, f.Diretor.Nome);
         return Ok(output);
     }
 
@@ -58,9 +55,7 @@ public class MovieController : ControllerBase
     [Route("{id}")]
     public async Task<ActionResult<Filme>> Delete(long id)
     {
-        Filme f = await _context.Filmes.FindAsync(id);
-        _context.Filmes.Remove(f);
-        await _context.SaveChangesAsync();
+        var f = await _filmeserv.Delete(id);
         return Ok(f);
     }
 
