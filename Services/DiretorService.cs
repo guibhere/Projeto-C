@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-public class DiretorService : IDiretorService 
+public class DiretorService : IDiretorService
 {
     private readonly AplicationDbContext _context;
     public DiretorService(AplicationDbContext context)
@@ -31,11 +33,6 @@ public class DiretorService : IDiretorService
         return diretores;
     }
 
-    public async Task<Diretor> GetById(long id)
-    {
-        var diretor = await _context.Diretores.FirstOrDefaultAsync(diretor => diretor.Id == id);
-        return diretor;
-    }
 
     public async Task<Diretor> Update(Diretor diretor)
     {
@@ -43,4 +40,38 @@ public class DiretorService : IDiretorService
         await _context.SaveChangesAsync();
         return diretor;
     }
+
+    public async Task<DiretorListOutputGetAllDTO> GetByPageAsync(int limit, int page, CancellationToken cancellationToken)
+    {
+        var pagedModel = await _context.Diretores
+                .AsNoTracking()
+                .OrderBy(p => p.Id)
+                .PaginateAsync(page, limit, cancellationToken);
+
+        if (!pagedModel.Items.Any())
+        {
+            throw new Exception("Não existem diretores cadastrados!");
+        }
+
+        var CurrentPage = pagedModel.CurrentPage;
+        var TotalPages = pagedModel.TotalPages;
+        var TotalItems = pagedModel.TotalItems;
+        var Items = pagedModel.Items.Select(diretor => new DiretorOutputGetAllDTO(diretor.Id, diretor.Nome)).ToList();
+
+        DiretorListOutputGetAllDTO listOutputGetAllDTO = new DiretorListOutputGetAllDTO(CurrentPage, TotalPages, TotalItems, Items);
+
+        return listOutputGetAllDTO;
+    }
+    public async Task<Diretor> GetById(long id)
+    {
+        var diretor = await _context.Diretores.FirstOrDefaultAsync(diretor => diretor.Id == id);
+
+        if (diretor == null)
+        {
+            throw new System.Exception("Não existem diretores cadastrados!");
+        }
+
+        return diretor;
+    }
+
 }

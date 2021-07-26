@@ -2,6 +2,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System;
+using System.Threading;
+
 [ApiController]
 [Route("[controller]")]
 public class MovieController : ControllerBase
@@ -30,16 +33,13 @@ public class MovieController : ControllerBase
         return Ok(output);
     }
 
+
     [HttpGet]
-    public async Task<List<FilmeOutPutGetAllDTO>> GetAll()
+    public async Task<ActionResult<FilmeListOutputGetAllDTO>> Get(CancellationToken cancellationToken, int limit = 5, int page = 1)
     {
-        var filmes = await _filmeserv.GetAll();
-        var output = new List<FilmeOutPutGetAllDTO>();
-        foreach (Filme f in filmes)
-        {
-            output.Add(new FilmeOutPutGetAllDTO(f.Id, f.Titulo));
-        }
-        return output;
+
+
+        return await _filmeserv.GetByPageAsync(limit, page, cancellationToken);
     }
 
     [HttpGet]

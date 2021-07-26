@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,23 +19,10 @@ public class DiretorController : ControllerBase
 
     // GET api/diretores
     [HttpGet]
-    public async Task<ActionResult<List<DiretorOutputGetDTO>>> Get()
+    public async Task<ActionResult<DiretorListOutputGetAllDTO>> Get(CancellationToken cancellationToken, int limit = 5, int page = 1)
     {
-        var diretores = await _DiretorService.GetAll();
+        return await _DiretorService.GetByPageAsync(limit, page, cancellationToken);
 
-        if (!diretores.Any())
-        {
-            return NotFound("Não existem diretores cadastrados!");
-        }
-
-        var outputDTOList = new List<DiretorOutputGetDTO>();
-
-        foreach (Diretor diretor in diretores)
-        {
-            outputDTOList.Add(new DiretorOutputGetDTO(diretor.Id, diretor.Nome));
-        }
-
-        return outputDTOList;
     }
 
     // GET api/diretores/1
