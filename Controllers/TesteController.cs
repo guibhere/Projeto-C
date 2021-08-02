@@ -15,9 +15,9 @@ namespace Projeto_C_.Controllers
     public class TesteController : ControllerBase
     {
         public static IWebHostEnvironment _environment;
-        private readonly AplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public TesteController(AplicationDbContext context, IWebHostEnvironment environment)
+        public TesteController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
             _environment = environment;
