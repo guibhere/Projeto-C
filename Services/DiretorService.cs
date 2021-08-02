@@ -8,8 +8,8 @@ using Net5_Api.Extensions;
 
 public class DiretorService : IDiretorService
 {
-    private readonly AplicationDbContext _context;
-    public DiretorService(AplicationDbContext context)
+    private readonly ApplicationDbContext _context;
+    public DiretorService(ApplicationDbContext context)
     {
         _context = context;
     }

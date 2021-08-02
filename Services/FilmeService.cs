@@ -9,8 +9,8 @@ using Net5_Api.Extensions;
 
 public class FilmeService : IFilmeService
 {
-    private readonly AplicationDbContext _context;
-    public FilmeService(AplicationDbContext context)
+    private readonly ApplicationDbContext _context;
+    public FilmeService(ApplicationDbContext context)
     {
         _context = context;
     }
