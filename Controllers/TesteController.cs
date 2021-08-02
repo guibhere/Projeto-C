@@ -23,7 +23,7 @@ namespace Projeto_C_.Controllers
             _environment = environment;
         }
         [HttpGet("Arquivos/All")]
-        public async Task<String[]> GetAllFiles()
+        public String[] GetAllFiles()
         {
             string dir = _environment.ContentRootPath + "\\Arquivos\\";
             return Directory.GetFiles(dir);
