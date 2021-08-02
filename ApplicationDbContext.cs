@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-public class ApplicationDbContext : DbContext
+public class AplicationDbContext : DbContext
 {
 public DbSet<Filme> Filmes {get;set;}
 public DbSet<Diretor> Diretores{get;set;}
 
-public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options){}
+public AplicationDbContext(DbContextOptions<AplicationDbContext> options): base(options){}
 
 
 }
