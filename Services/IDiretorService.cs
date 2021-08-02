@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 public interface IDiretorService
@@ -9,5 +10,6 @@ public interface IDiretorService
 
     Task<Diretor> GetById(long id);
     Task<Diretor> Update(Diretor diretor);
+    Task<DiretorListOutputGetAllDTO> GetByPageAsync(int limit, int page, CancellationToken cancellationToken);
 
 }

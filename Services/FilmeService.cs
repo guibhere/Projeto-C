@@ -7,7 +7,7 @@ using System.Threading;
 using System.Linq;
 using Net5_Api.Extensions;
 
-public class FilmeService
+public class FilmeService : IFilmeService
 {
     private readonly AplicationDbContext _context;
     public FilmeService(AplicationDbContext context)
@@ -55,7 +55,7 @@ public class FilmeService
     }
 
 
-    public async Task<ActionResult<Filme>> Delete(long id)
+    public async Task<Filme> Delete(long id)
     {
         Filme f = await _context.Filmes.FindAsync(id);
         _context.Filmes.Remove(f);
@@ -83,7 +83,5 @@ public class FilmeService
 
         return listOutputGetAllDTO;
     }
-
-
 
 }
