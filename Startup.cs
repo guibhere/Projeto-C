@@ -121,6 +121,8 @@ namespace Projeto_C_
             app.UseRouting();
 
             app.UseAuthorization();
+            
+            app.UseAuthentication();
 
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
