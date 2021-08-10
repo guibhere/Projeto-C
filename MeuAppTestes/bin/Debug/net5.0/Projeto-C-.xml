@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Projeto-C-</name>
+    </assembly>
+    <members>
+        <member name="M:DiretorController.Post(DiretorInputPostDTO)">
+             <summary>
+             Cria um diretor
+             </summary>
+             <remarks>
+             Sample request:
+            
+                 POST /diretor
+                 {
+                    "nome": "Martin Scorsese",
+                 }
+            
+             </remarks>
+             <param name="diretorInputDto">Nome do diretor</param>
+             <returns>O diretor criado</returns>
+             <response code="200">Diretor foi criado com sucesso</response>
+             <response code="400">Bad Request</response>
+             <response code="404">Not Found</response>
+             <response code="500">Erro interno inesperado</response>
+             
+        </member>
+    </members>
+</doc>
