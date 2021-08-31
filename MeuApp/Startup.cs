@@ -99,7 +99,7 @@ namespace Projeto_C_
                 };
             });
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite("Data Source=myapp.db"));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("Default")));
             services.AddScoped<IFilmeService, FilmeService>();
             services.AddScoped<IDiretorService, DiretorService>();
             services.AddControllers().AddNewtonsoftJson(options =>
