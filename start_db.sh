@@ -1,0 +1,1 @@
+docker-compose --project-name=MeuApp --file=docker-compose.yml up -d

@@ -1,8 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
-EXPOSE 5000
-ENV ASPNETCORE_URLS=http://*:5000
-    
+
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["MeuApp/Projeto-C-.csproj", "MeuApp/"]
@@ -21,4 +19,4 @@ COPY --from=publish /app/publish .
 RUN useradd -m myappuser
 USER myappuser
 
-ENTRYPOINT ["dotnet","Projeto-C-.dll"]
+CMD ASPNETCORE_URLS="http://192.168.65.10:5000" dotnet Projeto-C-.dll
