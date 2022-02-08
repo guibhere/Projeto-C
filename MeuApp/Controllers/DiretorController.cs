@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("[controller]")]
@@ -65,7 +61,16 @@ public class DiretorController : ControllerBase
         var diretor = new Diretor(diretorInputDto.Nome);
         await _DiretorService.Add(diretor);
 
-        var diretorOutputDto = new DiretorOutputPostDTO(diretor.Id, diretor.Nome);
+        var diretorOutputDto = new DiretorOutputPostDTO(diretor);
+        return Ok(diretorOutputDto);
+    }
+    [HttpPost("/filmes")]
+    public async Task<ActionResult<DiretorOutputPostDTO>> PostFilmes([FromBody] DiretorFilmesInputPostDTO input)
+    {
+
+        var diretor = await _DiretorService.AddF(input);
+
+        var diretorOutputDto = new DiretorOutputPostDTO(diretor);
         return Ok(diretorOutputDto);
     }
 

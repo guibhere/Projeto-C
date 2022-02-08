@@ -21,6 +21,19 @@ public class DiretorService : IDiretorService
         return diretor;
     }
 
+    public async Task<Diretor> AddF(DiretorFilmesInputPostDTO input)
+    {
+        Diretor diretor = new Diretor(input.Nome);
+        foreach(var f in input.Filmes)
+        {
+            diretor.Filmes.Add(new Filme(f.Titulo));
+        }
+
+        _context.Diretores.Add(diretor);
+        await _context.SaveChangesAsync();
+        return diretor;
+    }
+
     public async Task<Diretor> Delete(long id)
     {
         var diretor = await _context.Diretores.FirstOrDefaultAsync(diretor => diretor.Id == id);

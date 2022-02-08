@@ -6,7 +6,6 @@ using System;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 
-[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class MovieController : ControllerBase
@@ -25,6 +24,16 @@ public class MovieController : ControllerBase
         var output = new FilmeOutputPostDTO(f.Id, f.Titulo, f.DiretorId);
         return Ok(output);
     }
+
+    [HttpPost("/diretor")]
+    public async Task<ActionResult<FilmeOutputPostDTO>> PostD([FromBody] FilmeInputPostDTO input)
+    {
+        var f = new Filme(input.Titulo, input.DiretorID);
+        await _filmeserv.Post(f);
+        var output = new FilmeOutputPostDTO(f.Id, f.Titulo, f.DiretorId);
+        return Ok(output);
+    }
+
     [HttpPut("{id}")]
     public async Task<ActionResult<Filme>> Put(long id, [FromBody] FilmeInputPutDTO input)
     {
